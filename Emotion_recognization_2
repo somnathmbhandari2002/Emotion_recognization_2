@@ -1,0 +1,33 @@
+from deepface import DeepFace
+import cv2
+
+# Start video capture from webcam
+cap = cv2.VideoCapture(0)
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    try:
+        # Analyze emotion on the current frame
+        result = DeepFace.analyze(frame, actions=["emotion"], enforce_detection=False)
+        dominant_emotion = result[0]['dominant_emotion']
+        print("Emotion:", dominant_emotion)
+
+        # Display emotion on screen
+        cv2.putText(frame, f'Emotion: {dominant_emotion}', (50, 50),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    except Exception as e:
+        print("Error:", e)
+
+    # Show the webcam feed
+    cv2.imshow("Emotion Recognition", frame)
+
+    # Break loop on 'q' key press
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release resources
+cap.release()
+cv2.destroyAllWindows()
